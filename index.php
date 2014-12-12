@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script
-            src="http://maps.googleapis.com/maps/api/js">
-        </script>
+        <script src="http://maps.googleapis.com/maps/api/js"></script>
+        <script src="js/jQuery/jquery-1.11.1.js"></script>
 
         <script>
             window.onload = function () {
+                var downloadLocations = 'downloadLocations.php';
+                var soundLocationArray = $.getJSON(downloadLocations, {
+                    service: 'noise',
+                    mode: "download",
+                    format: "json"
+                }).success(function (data) {
+                    alert(data.toSource());
+                    $.each(data.items, function (i, item) {
+
+                    });
+                });
                 var mapOptions = {
                     //give latitude and long
                     center: new google.maps.LatLng(7.0, 81.0),
