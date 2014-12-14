@@ -1,7 +1,7 @@
 <?php
  $data = array('metadata' => array('service' => 'noise', 'mode' => 'download'), 'rawdata' => array('start_time' => '', 'end_time' => ''));
  $data_string = json_encode($data);
- $url = 'http://156.56.93.34/CDME/request.php';
+ $url = 'http://localhost/CDME/request.php';
 
  $ch = curl_init($url);
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");

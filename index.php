@@ -7,16 +7,6 @@
         <script>
             window.onload = function () {
                 var downloadLocations = 'downloadLocations.php';
-                var soundLocationArray = $.getJSON(downloadLocations, {
-                    service: 'noise',
-                    mode: "download",
-                    format: "json"
-                }).success(function (data) {
-                    alert(data.toSource());
-                    $.each(data.items, function (i, item) {
-
-                    });
-                });
                 var mapOptions = {
                     //give latitude and long
                     center: new google.maps.LatLng(7.0, 81.0),
@@ -25,12 +15,22 @@
                 };
                 var infoWindow = new google.maps.InfoWindow();
                 var map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
-                //give latitude and long
-                var myLatlng = new google.maps.LatLng(7.0, 81.0);
-                var marker = new google.maps.Marker({
-                    position: myLatlng,
-                    map: map,
-                    title: "Mumbai"
+
+                var soundLocationArray = $.getJSON(downloadLocations, {
+                    service: 'noise',
+                    mode: "download",
+                    format: "json"
+                }).success(function (data) {
+                    $.each(data, function (i, item) {
+                        console.log(item);
+                        //give latitude and long
+                        var myLatlng = new google.maps.LatLng(item.latitude, item.longitude);
+                        var marker = new google.maps.Marker({
+                            position: myLatlng,
+                            map: map,
+                            title: item.noise_level
+                        });
+                    });
                 });
             }
         </script>
