@@ -22,7 +22,6 @@
                     format: "json"
                 }).success(function (data) {
                     $.each(data, function (i, item) {
-                        console.log(item);
                         //give latitude and long
                         var myLatlng = new google.maps.LatLng(item.latitude, item.longitude);
                         var marker = new google.maps.Marker({
