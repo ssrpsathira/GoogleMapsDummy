@@ -3,7 +3,11 @@
     <head>
         <script src="http://maps.googleapis.com/maps/api/js"></script>
         <script src="js/jQuery/jquery-1.11.1.js"></script>
-
+        <style type="text/css">
+            html { height: 100% }
+            body { height: 100%; margin: 0px; padding: 0px }
+            #googleMap { height: 100% }
+        </style>
         <script>
             window.onload = function () {
                 var downloadLocations = 'downloadLocations.php';
@@ -36,7 +40,7 @@
     </head>
 
     <body>
-        <div id="googleMap" style="width:500px;height:380px;"></div>
+        <div id="googleMap"></div>
 
     </body>
 </html>
