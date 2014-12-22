@@ -14,11 +14,12 @@
                 var mapOptions = {
                     //give latitude and long
                     center: new google.maps.LatLng(7.0, 81.0),
-                    zoom: 6,
+                    zoom: 7,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
                 var infoWindow = new google.maps.InfoWindow();
                 var map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
+                
 
                 var soundLocationArray = $.getJSON(downloadLocations, {
                     service: 'noise',
@@ -34,6 +35,19 @@
                             title: item.noise_level
                         });
                     });
+                });
+                loadKmlLayer('kml/districts.kmz', map);
+            };
+            function loadKmlLayer(src, map) {
+                var kmlLayer = new google.maps.KmlLayer(src, {
+                    suppressInfoWindows: true,
+                    preserveViewport: false,
+                    map: map
+                });
+                google.maps.event.addListener(kmlLayer, 'click', function (event) {
+                    var content = event.featureData.infoWindowHtml;
+                    var testimonial = document.getElementById('capture');
+                    testimonial.innerHTML = content;
                 });
             }
         </script>
