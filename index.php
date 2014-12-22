@@ -19,7 +19,7 @@
                 };
                 var infoWindow = new google.maps.InfoWindow();
                 var map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
-                
+                loadKmlLayer('http://156.56.93.34/GoogleMapsDummy/kml/doc.kml', map);
 
                 var soundLocationArray = $.getJSON(downloadLocations, {
                     service: 'noise',
@@ -36,7 +36,6 @@
                         });
                     });
                 });
-                loadKmlLayer('kml/districts.kmz', map);
             };
             function loadKmlLayer(src, map) {
                 var kmlLayer = new google.maps.KmlLayer(src, {
