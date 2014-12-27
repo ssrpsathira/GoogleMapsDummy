@@ -19,7 +19,9 @@
                 };
                 var infoWindow = new google.maps.InfoWindow();
                 var map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
-                loadKmlLayer('http://156.56.93.34/kml/LKA_adm1.kmz', map);
+                var kmzLayer = new google.maps.KmlLayer('http://156.56.93.34/CDME/kml/SL/LKA_adm2.kmz');
+                kmzLayer.setMap(map);
+//                loadKmlLayer('http://156.56.93.34/CDME/kml/SL/LKA_adm1.kmz', map);
 
                 var soundLocationArray = $.getJSON(downloadLocations, {
                     service: 'noise',
@@ -40,18 +42,18 @@
 
             google.maps.event.addDomListener(window, 'load', initialize);
 
-            function loadKmlLayer(src, map) {
-                var kmlLayer = new google.maps.KmlLayer(src, {
-                    suppressInfoWindows: true,
-                    preserveViewport: false,
-                    map: map
-                });
-                google.maps.event.addListener(kmlLayer, 'click', function (event) {
-                    var content = event.featureData.infoWindowHtml;
-                    var testimonial = document.getElementById('capture');
-                    testimonial.innerHTML = content;
-                });
-            }
+//            function loadKmlLayer(src, map) {
+//                var kmlLayer = new google.maps.KmlLayer(src, {
+//                    suppressInfoWindows: true,
+//                    preserveViewport: false,
+//                    map: map
+//                });
+//                google.maps.event.addListener(kmlLayer, 'click', function (event) {
+//                    var content = event.featureData.infoWindowHtml;
+//                    var testimonial = document.getElementById('capture');
+//                    testimonial.innerHTML = content;
+//                });
+//            }
         </script>
     </head>
 
