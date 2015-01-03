@@ -1,6 +1,6 @@
 <?php
 set_time_limit(0);
- $data = array('metadata' => array('service' => 'noise', 'mode' => 'download'), 'rawdata' => array('start_time' => '', 'end_time' => ''));
+ $data = array('metadata' => array('service' => 'noise', 'mode' => 'download', 'feature' => 'allLocations'), 'rawdata' => array('start_time' => '', 'end_time' => ''));
  $data_string = json_encode($data);
  $url = 'http://156.56.93.34/CDME/request.php';
 
