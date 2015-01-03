@@ -11,7 +11,7 @@
         <script>
             function initialize() {
                 var downloadAllLocationsProcessor = 'downloadLocations.php';
-                var downloadDistrictStatisticsProcessor = 'downloadDistrictStatistics.php';
+                var downloadAdminRegionStatisticsProcessor = 'downloadAdminRegionStatistics.php';
                 var mapOptions = {
                     //give latitude and long
                     center: new google.maps.LatLng(7.0, 81.0),
@@ -27,7 +27,7 @@
                     var arr = kmlEvent.featureData.id.trim().split('_');
                     var id = arr[0];
                     var level = arr[1];
-                    showDistrictStatisticsGraph(id, level, downloadDistrictStatisticsProcessor);
+                    showDistrictStatisticsGraph(id, level, downloadAdminRegionStatisticsProcessor);
                 });
                 showAllLocationPoints(downloadAllLocationsProcessor);
             }
@@ -38,7 +38,7 @@
                     region_level: level,
                 }).success(function (data) {
                     $.each(data, function (i, item) {
-                        
+                        alert(item.id);
                     });
                 });
             }
