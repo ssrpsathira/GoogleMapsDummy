@@ -48,10 +48,10 @@
                     region_level: level,
                 }).success(function (data) {
                     $.each(data, function (i, item) {
-                        meanDataPointsArray.push([item.date_time * 1000, parseFloat(item.mean)]);
-                        medianDataPointsArray.push([item.date_time * 1000, parseFloat(item.median)]);
-                        modDataPointsArray.push([item.date_time * 1000, parseFloat(item.mod)]);
-                        sdDataPointsArray.push([item.date_time * 1000, parseFloat(item.sd)]);
+                        meanDataPointsArray.push([item.date_time * 1000, parseFloat(item.mean || 0)]);
+                        medianDataPointsArray.push([item.date_time * 1000, parseFloat(item.median || 0)]);
+                        modDataPointsArray.push([item.date_time * 1000, parseFloat(item.mod || 0)]);
+                        sdDataPointsArray.push([item.date_time * 1000, parseFloat(item.sd || 0)]);
                     });
                     $('#chartContainer').highcharts('StockChart', {
                         legend: {
