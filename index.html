@@ -54,6 +54,10 @@
                         sdDataPointsArray.push([item.date_time * 1000, parseFloat(item.sd)]);
                     });
                     $('#chartContainer').highcharts('StockChart', {
+                        legend: {
+                            enabled: true,
+                            align: 'bottom'
+                        },
                         rangeSelector: {
                             selected: 1
                         },
@@ -90,7 +94,6 @@
                             }]
                     });
                     $('#chartContainer').show("slow");
-
                 });
             }
 
