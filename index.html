@@ -3,10 +3,14 @@
     <head>
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
         <script src="js/jQuery/jquery-1.11.1.js"></script>
+        <script src="highstocks/highstock.js"></script>
+        <script src="highstocks/exporting.js"></script>
         <style type="text/css">
             html { height: 100% }
             body { height: 100%; margin: 0px; padding: 0px }
+            #wrapper { position: relative; }
             #googleMap { height: 100% }
+            #chartContainer { height: 300px; width: auto; display: none ;z-index: 3;position: absolute;top: 10px;left: 10px;}
         </style>
         <script>
             function initialize() {
@@ -23,23 +27,70 @@
                 var kmzLayer = new google.maps.KmlLayer('http://156.56.93.34/CDME/kml/SL/admin_2_regions.kmz');
                 kmzLayer.setMap(map);
 
+                showAllLocationPoints(downloadAllLocationsProcessor);
+
                 google.maps.event.addListener(kmzLayer, 'click', function (kmlEvent) {
                     var arr = kmlEvent.featureData.id.trim().split('_');
+                    var regionName = kmlEvent.featureData.name.trim();
                     var id = arr[0];
                     var level = arr[1];
-                    showDistrictStatisticsGraph(id, level, downloadAdminRegionStatisticsProcessor);
+                    showDistrictStatisticsGraph(id, level, regionName, downloadAdminRegionStatisticsProcessor);
                 });
-                showAllLocationPoints(downloadAllLocationsProcessor);
             }
 
-            function showDistrictStatisticsGraph(id, level, processorPath) {
+            function showDistrictStatisticsGraph(id, level, regionName, processorPath) {
+                var meanDataPointsArray = [];
+                var medianDataPointsArray = [];
+                var modDataPointsArray = [];
+                var sdDataPointsArray = [];
                 $.getJSON(processorPath, {
-                    region_id :id,
+                    region_id: id,
                     region_level: level,
                 }).success(function (data) {
                     $.each(data, function (i, item) {
-                        alert(item.id);
+                        meanDataPointsArray.push([item.date_time * 1000, parseFloat(item.mean)]);
+                        medianDataPointsArray.push([item.date_time * 1000, parseFloat(item.median)]);
+                        modDataPointsArray.push([item.date_time * 1000, parseFloat(item.mod)]);
+                        sdDataPointsArray.push([item.date_time * 1000, parseFloat(item.sd)]);
                     });
+                    $('#chartContainer').highcharts('StockChart', {
+                        rangeSelector: {
+                            selected: 1
+                        },
+                        title: {
+                            text: regionName + ' Region Statistics'
+                        },
+                        series: [{
+                                name: 'Mean',
+                                data: meanDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            },
+                            {
+                                name: 'Median',
+                                data: medianDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            },
+                            {
+                                name: 'Mod',
+                                data: modDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            },
+                            {
+                                name: 'Stand. Deviation',
+                                data: sdDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            }]
+                    });
+                    $('#chartContainer').show("slow");
+
                 });
             }
 
@@ -64,6 +115,6 @@
 
     <body>
         <div id="googleMap"></div>
-
+        <div id="chartContainer"></div>
     </body>
 </html>
