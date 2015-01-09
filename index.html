@@ -14,15 +14,17 @@
         </style>
         <script>
             function initialize() {
-                var downloadAllLocationsProcessor = 'downloadLocations.php';
-                var downloadAdminRegionStatisticsProcessor = 'downloadAdminRegionStatistics.php';
+                downloadAllLocationsProcessor = 'downloadLocations.php';
+                downloadAdminRegionStatisticsProcessor = 'downloadAdminRegionStatistics.php';
+                downloadLatestLocationStatisticsProcessor = 'downloadLatestLocationStatistics.php';
+                downloadOverallLocationStatisticsProcessor = 'downloadOverallLocationStatistics.php';
                 var mapOptions = {
                     //give latitude and long
                     center: new google.maps.LatLng(7.0, 81.0),
                     zoom: 7,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
-                var infoWindow = new google.maps.InfoWindow();
+                infoWindow = new google.maps.InfoWindow();
                 map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
                 var kmzLayer = new google.maps.KmlLayer('http://156.56.93.34/CDME/kml/SL/admin_2_regions.kmz');
                 kmzLayer.setMap(map);
@@ -97,6 +99,19 @@
                 });
             }
 
+            function setInfoWindowContent(marker) {
+                $.getJSON(downloadLatestLocationStatisticsProcessor, {
+                    locationId: marker.locationId,
+                }).success(function (data) {
+                    var mean = (data[0].mean) || 0;
+                    var median = (data[0].median) || 0;
+                    var mod = (data[0].mod) || 0;
+                    var sd = (data[0].sd) || 0;
+                    infoWindow.setContent("<table style=\"width:100%\"><tr><td>Mean</td><td>" + mean + "</td></tr><tr><td>Median</td><td>" + median + "</td></tr><tr><td>Mod</td><td>" + mod + "</td></tr><tr><td>Standard Deviation</td><td>" + sd + "</td></tr></table>");
+                    infoWindow.open(map, marker);
+                });
+            }
+
             function showAllLocationPoints(processorPath) {
                 $.getJSON(processorPath, {
                 }).success(function (data) {
@@ -106,7 +121,11 @@
                         var marker = new google.maps.Marker({
                             position: myLatlng,
                             map: map,
-                            title: item.noise_level
+                            title: item.noise_level,
+                            locationId: item.location_id
+                        });
+                        google.maps.event.addListener(marker, 'click', function () {
+                            setInfoWindowContent(marker);
                         });
                     });
                 });
