@@ -103,12 +103,76 @@
                 $.getJSON(downloadLatestLocationStatisticsProcessor, {
                     locationId: marker.locationId,
                 }).success(function (data) {
-                    var mean = (data[0].mean) || 0;
-                    var median = (data[0].median) || 0;
-                    var mod = (data[0].mod) || 0;
-                    var sd = (data[0].sd) || 0;
+                    var mean = 0;
+                    var median = 0;
+                    var mod = 0;
+                    var sd = 0;
+                    if (data != null) {
+                        mean = data[0].mean;
+                        median = data[0].median;
+                        mod = data[0].mod;
+                        sd = data[0].sd;
+                    }
                     infoWindow.setContent("<table style=\"width:100%\"><tr><td>Mean</td><td>" + mean + "</td></tr><tr><td>Median</td><td>" + median + "</td></tr><tr><td>Mod</td><td>" + mod + "</td></tr><tr><td>Standard Deviation</td><td>" + sd + "</td></tr></table>");
                     infoWindow.open(map, marker);
+                });
+            }
+
+            function setOverallStatisticsGraph(marker) {
+                var meanDataPointsArray = [];
+                var medianDataPointsArray = [];
+                var modDataPointsArray = [];
+                var sdDataPointsArray = [];
+                $.getJSON(downloadOverallLocationStatisticsProcessor, {
+                    locationId: marker.locationId,
+                }).success(function (data) {
+                    $.each(data, function (i, item) {
+                        meanDataPointsArray.push([item.date_time * 1000, parseFloat(item.mean || 0)]);
+                        medianDataPointsArray.push([item.date_time * 1000, parseFloat(item.median || 0)]);
+                        modDataPointsArray.push([item.date_time * 1000, parseFloat(item.mod || 0)]);
+                        sdDataPointsArray.push([item.date_time * 1000, parseFloat(item.sd || 0)]);
+                    });
+                    $('#chartContainer').highcharts('StockChart', {
+                        legend: {
+                            enabled: true,
+                            align: 'bottom'
+                        },
+                        rangeSelector: {
+                            selected: 1
+                        },
+                        title: {
+                            text: 'Location Point Statistics'
+                        },
+                        series: [{
+                                name: 'Mean',
+                                data: meanDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            },
+                            {
+                                name: 'Median',
+                                data: medianDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            },
+                            {
+                                name: 'Mod',
+                                data: modDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            },
+                            {
+                                name: 'Stand. Deviation',
+                                data: sdDataPointsArray,
+                                tooltip: {
+                                    valueDecimals: 2
+                                }
+                            }]
+                    });
+                    $('#chartContainer').show("slow");
                 });
             }
 
@@ -126,6 +190,7 @@
                         });
                         google.maps.event.addListener(marker, 'click', function () {
                             setInfoWindowContent(marker);
+                            setOverallStatisticsGraph(marker);
                         });
                     });
                 });

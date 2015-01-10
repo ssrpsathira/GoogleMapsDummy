@@ -3,7 +3,7 @@
 set_time_limit(0);
 $data = array('metadata' => array('service' => 'noise', 'mode' => 'download', 'feature' => 'latestLocationStatistics'), 'rawdata' => array('location_id' => $_GET['locationId']));
 $data_string = json_encode($data);
-$url = 'http://localhost/CDME/request.php';
+$url = 'http://156.56.93.34/CDME/request.php';
 
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
