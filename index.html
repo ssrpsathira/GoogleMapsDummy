@@ -11,9 +11,24 @@
             #wrapper { position: relative; }
             #googleMap { height: 100% }
             #chartContainer { height: 300px; width: auto; display: none ;z-index: 3;position: absolute;top: 10px;left: 10px;}
+            #control_panel {height: auto; width: auto; z-index: 3; position: absolute; top: 20px; right: 20px;}
         </style>
         <script>
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                        results = regex.exec(location.search);
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
             function initialize() {
+                imei = '12345678901234';
+                fromDate = getParameterByName('from_date');
+                toDate = getParameterByName('to_date');
+                samplingRate = getParameterByName('sampling_rate');
+                $('#from_date').val(fromDate);
+                $('#to_date').val(toDate);
+                $('#sampling_rate').val(samplingRate);
+                downloadKmzLayerProcessor = 'downloadKmzLayer.php';
                 downloadAllLocationsProcessor = 'downloadLocations.php';
                 downloadAdminRegionStatisticsProcessor = 'downloadAdminRegionStatistics.php';
                 downloadLatestLocationStatisticsProcessor = 'downloadLatestLocationStatistics.php';
@@ -26,21 +41,31 @@
                 };
                 infoWindow = new google.maps.InfoWindow();
                 map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
-                var kmzLayer = new google.maps.KmlLayer('http://156.56.93.34/CDME/kml/SL/admin_2_regions.kmz');
-                kmzLayer.setMap(map);
+                $.getJSON(downloadKmzLayerProcessor, {
+                    imei: imei,
+                    from_date: fromDate,
+                    to_date: toDate,
+                    sampling_rate: samplingRate
+                }).success(function (data) {
+                    kmzLayer = new google.maps.KmlLayer('http://156.56.93.34/CDME/kml/SL/admin_2_regions_' + imei + '.kmz');
+                    kmzLayer.setMap(null);
+                    kmzLayer.setMap(map);
+                    google.maps.event.addListener(kmzLayer, 'click', function (kmlEvent) {
+                        var arr = kmlEvent.featureData.id.trim().split('_');
+                        var regionName = kmlEvent.featureData.name.trim();
+                        var id = arr[0];
+                        var level = arr[1];
+                        showDistrictStatisticsGraph(id, level, regionName, fromDate, toDate, samplingRate, downloadAdminRegionStatisticsProcessor);
+                    });
+                });
 
-                showAllLocationPoints(downloadAllLocationsProcessor);
-
-                google.maps.event.addListener(kmzLayer, 'click', function (kmlEvent) {
-                    var arr = kmlEvent.featureData.id.trim().split('_');
-                    var regionName = kmlEvent.featureData.name.trim();
-                    var id = arr[0];
-                    var level = arr[1];
-                    showDistrictStatisticsGraph(id, level, regionName, downloadAdminRegionStatisticsProcessor);
+//                showAllLocationPoints(downloadAllLocationsProcessor);
+                google.maps.event.addListener(infoWindow, 'closeclick', function () {
+                    console.log("ji");
                 });
             }
 
-            function showDistrictStatisticsGraph(id, level, regionName, processorPath) {
+            function showDistrictStatisticsGraph(id, level, regionName, fromDate, toDate, samplingRate, processorPath) {
                 var meanDataPointsArray = [];
                 var medianDataPointsArray = [];
                 var modDataPointsArray = [];
@@ -48,6 +73,9 @@
                 $.getJSON(processorPath, {
                     region_id: id,
                     region_level: level,
+                    from_date: fromDate,
+                    to_date: toDate,
+                    sampling_rate: samplingRate
                 }).success(function (data) {
                     $.each(data, function (i, item) {
                         meanDataPointsArray.push([item.date_time * 1000, parseFloat(item.mean || 0)]);
@@ -203,5 +231,19 @@
     <body>
         <div id="googleMap"></div>
         <div id="chartContainer"></div>
+        <div id="control_panel">
+            <form>
+                From:<br>
+                <input id="from_date" type="text" name="from_date">
+                <br>
+                To:<br>
+                <input id="to_date" type="text" name="to_date">
+                <br>
+                Sampling Rate:<br>
+                <input id="sampling_rate" type="text" name="sampling_rate">
+                <br><br>
+                <input type="submit" value="Render">
+            </form>
+        </div>
     </body>
 </html>
