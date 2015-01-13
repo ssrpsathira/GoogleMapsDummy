@@ -41,13 +41,15 @@
                 };
                 infoWindow = new google.maps.InfoWindow();
                 map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
+                timeStamp = Math.round(new Date().getTime() / 1000);
                 $.getJSON(downloadKmzLayerProcessor, {
                     imei: imei,
                     from_date: fromDate,
                     to_date: toDate,
-                    sampling_rate: samplingRate
+                    sampling_rate: samplingRate,
+                    time_stamp: timeStamp
                 }).success(function (data) {
-                    kmzLayer = new google.maps.KmlLayer('http://156.56.93.34/CDME/kml/SL/admin_2_regions_' + imei + '.kmz');
+                    kmzLayer = new google.maps.KmlLayer('http://156.56.93.34/CDME/kml/SL/admin_2_regions_' + imei + '_' + timeStamp + '.kmz');
                     kmzLayer.setMap(null);
                     kmzLayer.setMap(map);
                     google.maps.event.addListener(kmzLayer, 'click', function (kmlEvent) {
@@ -59,7 +61,7 @@
                     });
                 });
 
-//                showAllLocationPoints(downloadAllLocationsProcessor);
+                showAllLocationPoints(downloadAllLocationsProcessor);
                 google.maps.event.addListener(infoWindow, 'closeclick', function () {
                     console.log("ji");
                 });
@@ -130,6 +132,8 @@
             function setInfoWindowContent(marker) {
                 $.getJSON(downloadLatestLocationStatisticsProcessor, {
                     locationId: marker.locationId,
+                    from_date: fromDate,
+                    to_date: toDate,
                 }).success(function (data) {
                     var mean = 0;
                     var median = 0;
@@ -206,6 +210,8 @@
 
             function showAllLocationPoints(processorPath) {
                 $.getJSON(processorPath, {
+                    from_date: fromDate,
+                    to_date: toDate
                 }).success(function (data) {
                     $.each(data, function (i, item) {
                         //give latitude and long
