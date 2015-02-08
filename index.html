@@ -3,8 +3,10 @@
     <head>
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
         <script src="js/jQuery/jquery-1.11.1.js"></script>
+        <script src="js/jquery.datetimepicker.js"></script>
         <script src="highstocks/highstock.js"></script>
         <script src="highstocks/exporting.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
         <style type="text/css">
             html { height: 100% }
             body { height: 100%; margin: 0px; padding: 0px }
@@ -14,6 +16,14 @@
             #control_panel {height: auto; width: auto; z-index: 3; position: absolute; top: 20px; right: 20px;}
         </style>
         <script>
+            $(function () {
+                $("#from_date").datetimepicker({
+                    format: 'Y-m-d H:i:s'
+                });
+                $("#to_date").datetimepicker({
+                    format: 'Y-m-d H:i:s'
+                });
+            });
             function getParameterByName(name) {
                 name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
                 var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -213,10 +223,10 @@
         <div id="control_panel">
             <form>
                 From:<br>
-                <input id="from_date" type="text" name="from_date">
+                <input id="from_date" type="text" name="from_date" class="hasDatepicker">
                 <br>
                 To:<br>
-                <input id="to_date" type="text" name="to_date">
+                <input id="to_date" type="text" name="to_date" class="hasDatepicker">
                 <br>
                 Sampling Rate:<br>
                 <input id="sampling_rate" type="text" name="sampling_rate">
