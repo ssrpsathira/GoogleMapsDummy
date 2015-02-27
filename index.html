@@ -4,9 +4,11 @@
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
         <script src="js/jQuery/jquery-1.11.1.js"></script>
         <script src="js/jquery.datetimepicker.js"></script>
+        <script src="js/jquery.range.js"></script>
         <script src="highstocks/highstock.js"></script>
         <script src="highstocks/exporting.js"></script>
         <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery.range.css">
         <style type="text/css">
             html { height: 100% }
             body { height: 100%; margin: 0px; padding: 0px }
@@ -16,12 +18,31 @@
             #control_panel {height: auto; width: auto; z-index: 3; position: absolute; top: 20px; right: 20px;}
         </style>
         <script>
+            $(document).ready(function () {
+                fromDate = getParameterByName('from_date');
+                toDate = getParameterByName('to_date');
+                samplingRate = getParameterByName('sampling_rate');
+                displacementRange = getParameterByName('displacement_range');
+                $('#from_date').val(fromDate);
+                $('#to_date').val(toDate);
+                $('#sampling_rate').val(samplingRate);
+                $('#displacement_range').val(displacementRange);
+            });
             $(function () {
                 $("#from_date").datetimepicker({
                     format: 'Y-m-d H:i:s'
                 });
                 $("#to_date").datetimepicker({
                     format: 'Y-m-d H:i:s'
+                });
+                $('#displacement_range').jRange({
+                    from: 0,
+                    to: 100,
+                    step: 1,
+                    scale: [0, 25, 50, 75, 100],
+                    format: '%s',
+                    width: 300,
+                    showLabels: true
                 });
             });
             function getParameterByName(name) {
@@ -32,14 +53,7 @@
             }
             function initialize() {
                 imei = '12345678901234';
-                fromDate = getParameterByName('from_date');
-                toDate = getParameterByName('to_date');
-                samplingRate = getParameterByName('sampling_rate');
-                displacementRange = getParameterByName('displacement_range');
-                $('#from_date').val(fromDate);
-                $('#to_date').val(toDate);
-                $('#sampling_rate').val(samplingRate);
-                $('#displacement_range').val(displacementRange);
+
                 downloadKmzLayerProcessor = 'downloadKmzLayer.php';
                 downloadAllLocationsProcessor = 'downloadLocations.php';
                 downloadAdminRegionStatisticsProcessor = 'downloadAdminRegionStatistics.php';
@@ -222,18 +236,32 @@
         <div id="chartContainer"></div>
         <div id="control_panel">
             <form>
-                From:<br>
+                From:<br/>
                 <input id="from_date" type="text" name="from_date" class="hasDatepicker">
-                <br>
-                To:<br>
+                <br/>
+                To:<br/>
                 <input id="to_date" type="text" name="to_date" class="hasDatepicker">
-                <br>
-                Sampling Rate:<br>
-                <input id="sampling_rate" type="text" name="sampling_rate">
-                <br>
-                Displacement Range(m):<br>
-                <input id="displacement_range" type="text" name="displacement_range">
-                <br><br>
+                <br/>
+                Sampling Rate:<br/>
+                <!--<input id="sampling_rate" type="text" name="sampling_rate">-->
+                <select id="sampling_rate" name="sampling_rate">
+                    <option value="1 day">1 Day</option>
+                    <option value="2 day">2 Days</option>
+                    <option value="3 day">3 Days</option>
+                    <option value="4 day">4 Days</option>
+                    <option value="5 day">5 Days</option>
+                    <option value="6 day">6 Days</option>
+                    <option value="6 day">6 Days</option>
+                    <option value="1 week">1 Week</option>
+                    <option value="2 week">2 Weeks</option>
+                    <option value="3 week">3 Weeks</option>
+                    <option value="3 week">3 Weeks</option>
+                    <option value="1 month">1 Month</option>
+                </select>
+                <br/>
+                Displacement Range(m):<br/><br/>
+                <input id="displacement_range" type="hidden" name="displacement_range">
+                <br/>
                 <input type="submit" value="Render">
             </form>
         </div>
