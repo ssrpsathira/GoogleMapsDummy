@@ -203,6 +203,11 @@
                     });
                     $('#chartContainer').show("slow");
                 });
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
             }
 
             function showAllLocationPoints(processorPath) {
